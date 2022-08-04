@@ -5,15 +5,14 @@
 package cheatatwordle;
 
 import Validation.Validator;
+import cheatatwordle.BarGraph.BarGraph;
+import cheatatwordle.BarGraph.BarGraphAmountLabel;
+import cheatatwordle.BarGraph.BarGraphLetterLabel;
 import classes.Guess;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -35,7 +34,7 @@ public class CheatAtWordle extends JFrame {
 
     String guessedWord = "";
     JTextField wordEntry;
-    JLabel wordEntryLabel, wordsRemainingLabel;
+    JLabel wordEntryLabel, wordsRemainingLabel, previousGuessesLabel;
 
     JButton addWord;
 
@@ -50,8 +49,15 @@ public class CheatAtWordle extends JFrame {
 
     ArrayList<Character> unavailableLetters = new ArrayList<>();
 
+    JComboBox<WordOrderingStrategy> wordOrderingStrategyJComboBox;
 
     LetterColorSelection letterColorSelection;
+
+    BarGraph barGraph;
+    BarGraphLetterLabel barGraphLabel;
+
+    BarGraphAmountLabel barGraphAmountLabel;
+
 
     CheatAtWordle() {
 
@@ -65,7 +71,7 @@ public class CheatAtWordle extends JFrame {
 
         // Set up mainPanel
         mainPanel = new JPanel();
-        mainPanel.setBounds(0, 0, 900, 700);
+        mainPanel.setBounds(0, 0, 1200, 700);
         mainPanel.setLayout(null);
         contentPane.add(mainPanel);
 
@@ -83,7 +89,9 @@ public class CheatAtWordle extends JFrame {
         //Add Word Button
         addWord = new JButton();
         addWord.setText("Add Word");
-        addWord.setBounds(50, 450, 100, 25);
+        addWord.setBackground(new Color(106, 150, 100));
+        addWord.setForeground(Color.WHITE);
+        addWord.setBounds(50, 460, 120, 25);
         addWord.addActionListener((ActionEvent evt) -> {
             createGuess(evt);
         });
@@ -92,7 +100,7 @@ public class CheatAtWordle extends JFrame {
 
         //Words Remaining Label
         wordsRemainingLabel = new JLabel("Words Remaining: ");
-        wordsRemainingLabel.setBounds(350, 350, 150, 30);
+        wordsRemainingLabel.setBounds(235, 25, 150, 30);
         mainPanel.add(wordsRemainingLabel);
 
 
@@ -104,25 +112,73 @@ public class CheatAtWordle extends JFrame {
         String words = gl.getWordsForDisplay();
         wordListDisplayArea.setText(words);
 
+        //Title for Remaining Words With Call to Get Remaining Word Count From Game Logic
+        wordsRemainingLabel.setText("Words Remaining: " + gl.getWordsRemainingCount());
+
+
+        //Adding wordListDisplayArea/Scroll Pane
         scroll = new JScrollPane(wordListDisplayArea);
-        scroll.setBounds(350, 30, 150, 300);
+        scroll.setBounds(235, 55, 150, 300);
+        mainPanel.add(scroll);
+
+
+        //Previous Guesses Label and Instantiation
+        previousGuessesLabel = new JLabel("Previous Guesses");
+        previousGuessesLabel.setBounds(420, 24, 150, 30);
+        mainPanel.add(previousGuessesLabel);
 
         previousGuesses = new PreviousGuesses(this);
+        mainPanel.add(previousGuesses);
+
+        //Letter Color Section Instantiation
         letterColorSelection = new LetterColorSelection();
 
         mainPanel.add(letterColorSelection);
-        mainPanel.add(previousGuesses);
-        mainPanel.add(scroll);
 
-        wordsRemainingLabel.setText("Words Remaining: " + gl.getWordsRemainingCount());
+
+        //Order Selection
+        wordOrderingStrategyJComboBox = new JComboBox(WordOrderingStrategy.values());
+        wordOrderingStrategyJComboBox.setBounds(235, 380, 150, 30);
+
+
+        JButton jButtonReorderWords = new JButton("Reorder Words");
+        jButtonReorderWords.setBounds(235, 415, 150, 30);
+        jButtonReorderWords.addActionListener((ActionEvent evt) -> {
+            reOrderWords(evt);
+        });
+        mainPanel.add(jButtonReorderWords);
+
+        mainPanel.add(wordOrderingStrategyJComboBox);
+
+        barGraph = new BarGraph();
+        barGraph.createBarGraph(gl.getLetterAmounts());
+        mainPanel.add(barGraph);
+
+        barGraphLabel = new BarGraphLetterLabel();
+        mainPanel.add(barGraphLabel);
+
+        barGraphAmountLabel = new BarGraphAmountLabel();
+        barGraphAmountLabel.createBarGraphAmountLabels(gl.getLetterAmounts());
+        mainPanel.add(barGraphAmountLabel);
+
         setTitle("Cheat At Wordle"); // set title bar string
         setSize(900, 700); // set window size
         setVisible(true); // display window
     }
 
+
+    public void reOrderWords(ActionEvent evt) {
+        gl.reorderWords((WordOrderingStrategy) wordOrderingStrategyJComboBox.getSelectedItem());
+        String words = gl.getWordsForDisplay();
+        wordListDisplayArea.setText(words);
+        scroll.getViewport().setViewPosition(new Point(0, 0));
+
+    }
+
     private void createGuess(ActionEvent evt) {
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
                 && Validator.isTextFreeOfGrayLetters(unavailableLetters, wordEntry)
+                && guesses.size() < 6
         ) {
 
             Guess guess = new Guess(wordEntry.getText(),
@@ -137,8 +193,15 @@ public class CheatAtWordle extends JFrame {
             processGuessAnalysis(guess);
             keepTrackOfUnavailableLetters(guess);
             handleDisplayChangesAfterGuess(guess);
+            setBarGraphChanges();
 
         }
+
+    }
+
+    public void setBarGraphChanges() {
+        barGraph.createBarGraph(gl.getLetterAmounts());
+        barGraphAmountLabel.updateBarGraphAmountLabels(gl.getLetterAmounts());
     }
 
 
@@ -184,7 +247,7 @@ public class CheatAtWordle extends JFrame {
 
         wordListDisplayArea.setText(words);
         letterColorSelection.resetBoxes();
-
+        setBarGraphChanges();
 
         this.revalidate();
         this.repaint();

@@ -4,17 +4,15 @@
  */
 package logic;
 
+import cheatatwordle.WordOrderingStrategy;
 import classes.Guess;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Map.entry;
 
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +25,8 @@ public class GameLogic {
 
     private ArrayList<String> allRemainingWords = new ArrayList<>();
     private final ArrayList<String> removedWords = new ArrayList<>();
+
+    private int[] letterAmounts = new int[26];
 
     public GameLogic() {
         loadWordsFromFile();
@@ -50,7 +50,6 @@ public class GameLogic {
 
     public String getWordsForDisplay() {
         String words = "";
-
         for (String w : allRemainingWords) {
             words += w + "\n";
         }
@@ -115,5 +114,33 @@ public class GameLogic {
     public void reloadWordsAfterGuessRemoval() {
         allRemainingWords.addAll(removedWords);
         removedWords.clear();
+    }
+
+    public int[] getLetterAmounts() {
+
+        Arrays.fill(letterAmounts, 0);
+
+        for (String w : allRemainingWords) {
+
+            letterAmounts[w.charAt(0) - 97]++;
+            letterAmounts[w.charAt(1) - 97]++;
+            letterAmounts[w.charAt(2) - 97]++;
+            letterAmounts[w.charAt(3) - 97]++;
+            letterAmounts[w.charAt(4) - 97]++;
+
+        }
+
+        return letterAmounts;
+    }
+
+    public void reorderWords(WordOrderingStrategy strategy) {
+        if (strategy == WordOrderingStrategy.ALPHABETICAL) {
+
+            Collections.sort(allRemainingWords);
+        } else if (strategy == WordOrderingStrategy.REVERSE_ALPHABETICAL) {
+            Collections.reverse(allRemainingWords);
+
+
+        }
     }
 }

@@ -41,7 +41,7 @@ public class PreviousGuesses extends JPanel {
     public PreviousGuesses(CheatAtWordle cheatAtWordle) {
 
 
-        setBounds(550, 30, 350, 350);
+        setBounds(420, 55, 350, 350);
         setBorder(new LineBorder(Color.GRAY, 1));
         GridLayout layout = new GridLayout(6, 1);
         layout.setHgap(10);
