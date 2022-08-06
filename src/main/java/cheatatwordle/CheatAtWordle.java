@@ -5,22 +5,15 @@
 package cheatatwordle;
 
 import Validation.Validator;
-import cheatatwordle.BarGraph.BarGraph;
-import cheatatwordle.BarGraph.BarGraphAmountLabel;
-import cheatatwordle.BarGraph.BarGraphLetterLabel;
+import BarGraph.BarGraph;
+import BarGraph.BarGraphAmountLabel;
+import BarGraph.BarGraphLetterLabel;
 import classes.Guess;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -49,7 +42,10 @@ public class CheatAtWordle extends JFrame {
 
     ArrayList<Character> unavailableLetters = new ArrayList<>();
 
-    JComboBox<WordOrderingStrategy> wordOrderingStrategyJComboBox;
+    ButtonGroup radioButtonGroup;
+
+    JRadioButton alphabeticalRadio, reverseAlphabeticalRadio, randomRadio, englishLangUsageRadio;
+
 
     LetterColorSelection letterColorSelection;
 
@@ -135,20 +131,41 @@ public class CheatAtWordle extends JFrame {
 
         mainPanel.add(letterColorSelection);
 
+        //Order Selection Group
+        radioButtonGroup = new ButtonGroup();
 
-        //Order Selection
-        wordOrderingStrategyJComboBox = new JComboBox(WordOrderingStrategy.values());
-        wordOrderingStrategyJComboBox.setBounds(235, 380, 150, 30);
+
+        //Radio for Alphabetical Sort
+        alphabeticalRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.ALPHABETICAL));
+        alphabeticalRadio.setBounds(235, 380, 150, 15);
+        radioButtonGroup.add(alphabeticalRadio);
+        mainPanel.add(alphabeticalRadio);
+
+        //Radio for Reverse-Alphabetical Sort
+        reverseAlphabeticalRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.REVERSE_ALPHABETICAL));
+        reverseAlphabeticalRadio.setBounds(235, 410, 150, 15);
+        radioButtonGroup.add(reverseAlphabeticalRadio);
+        mainPanel.add(reverseAlphabeticalRadio);
+
+        randomRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.RANDOM));
+        randomRadio.setBounds(235, 440, 150, 15);
+        radioButtonGroup.add(randomRadio);
+        mainPanel.add(randomRadio);
+
+
+        englishLangUsageRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG));
+        englishLangUsageRadio.setBounds(235, 470, 150, 15);
+        radioButtonGroup.add(englishLangUsageRadio);
+        mainPanel.add(englishLangUsageRadio);
 
 
         JButton jButtonReorderWords = new JButton("Reorder Words");
-        jButtonReorderWords.setBounds(235, 415, 150, 30);
+        jButtonReorderWords.setBounds(235, 500, 150, 35);
         jButtonReorderWords.addActionListener((ActionEvent evt) -> {
             reOrderWords(evt);
         });
         mainPanel.add(jButtonReorderWords);
 
-        mainPanel.add(wordOrderingStrategyJComboBox);
 
         barGraph = new BarGraph();
         barGraph.createBarGraph(gl.getLetterAmounts());
@@ -168,7 +185,19 @@ public class CheatAtWordle extends JFrame {
 
 
     public void reOrderWords(ActionEvent evt) {
-        gl.reorderWords((WordOrderingStrategy) wordOrderingStrategyJComboBox.getSelectedItem());
+        WordOrderingStrategy wordOrderingStrategy = null;
+
+        if (alphabeticalRadio.isSelected()) {
+            wordOrderingStrategy = WordOrderingStrategy.ALPHABETICAL;
+        } else if (reverseAlphabeticalRadio.isSelected()) {
+            wordOrderingStrategy = WordOrderingStrategy.REVERSE_ALPHABETICAL;
+        } else if (randomRadio.isSelected()) {
+            wordOrderingStrategy = WordOrderingStrategy.RANDOM;
+        } else if (englishLangUsageRadio.isSelected()) {
+            wordOrderingStrategy = WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG;
+        }
+
+        gl.reorderWords(wordOrderingStrategy);
         String words = gl.getWordsForDisplay();
         wordListDisplayArea.setText(words);
         scroll.getViewport().setViewPosition(new Point(0, 0));

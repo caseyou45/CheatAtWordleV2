@@ -23,15 +23,9 @@ import javax.swing.plaf.ComponentUI;
 public class PreviousGuesses extends JPanel {
 
     private final Font font = new Font("Calibri", Font.BOLD, 25);
-
-    private int xPosition = 550;
-    private int yPosition = 80;
     private int height = 40;
     private int width = 40;
 
-    private int xOffset = 0;
-
-    private int guessCount = 0;
 
     CheatAtWordle cheatAtWordle;
 

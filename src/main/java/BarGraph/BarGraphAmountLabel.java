@@ -1,4 +1,4 @@
-package cheatatwordle.BarGraph;
+package BarGraph;
 
 import logic.GameLogic;
 

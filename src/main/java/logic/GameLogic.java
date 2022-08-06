@@ -21,21 +21,28 @@ import java.util.logging.Logger;
  */
 public class GameLogic {
 
-    private static final File allFiveLetterWords = new File("src/main/java/resources/listOfWordsFinal.txt");
+    private static final File allFiveLetterWordsFile = new File("src/main/java/resources/listOfWordsFinal.txt");
+    private static final File lettersByEngUsageFile = new File("src/main/java/resources/lettersByPop.txt");
+
 
     private ArrayList<String> allRemainingWords = new ArrayList<>();
     private final ArrayList<String> removedWords = new ArrayList<>();
+    LinkedHashMap<String, Integer> wordsWeightedByLetterEngUsage = new LinkedHashMap<>();
+
 
     private int[] letterAmounts = new int[26];
+    private int[] lettersByEngUsage = new int[26];
 
     public GameLogic() {
         loadWordsFromFile();
+        loadLettersByEngUsageFile();
+
     }
 
     private void loadWordsFromFile() {
         Scanner sc = null;
         try {
-            sc = new Scanner(allFiveLetterWords);
+            sc = new Scanner(allFiveLetterWordsFile);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GameLogic.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -45,6 +52,26 @@ public class GameLogic {
             allRemainingWords.add(data);
         }
         sc.close();
+
+    }
+
+    private void loadLettersByEngUsageFile() {
+        Scanner sc = null;
+        try {
+            sc = new Scanner(lettersByEngUsageFile);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GameLogic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        int i = 26;
+        while (sc.hasNextLine()) {
+            char data = sc.nextLine().charAt(0);
+            int pos = data - 97;
+            lettersByEngUsage[pos] = i;
+            i--;
+        }
+        sc.close();
+
 
     }
 
@@ -117,30 +144,54 @@ public class GameLogic {
     }
 
     public int[] getLetterAmounts() {
-
         Arrays.fill(letterAmounts, 0);
-
         for (String w : allRemainingWords) {
-
             letterAmounts[w.charAt(0) - 97]++;
             letterAmounts[w.charAt(1) - 97]++;
             letterAmounts[w.charAt(2) - 97]++;
             letterAmounts[w.charAt(3) - 97]++;
             letterAmounts[w.charAt(4) - 97]++;
-
         }
-
         return letterAmounts;
     }
+
+    public void weightWordsByLetter(int[] letterSource, LinkedHashMap destinationHashMap) {
+        for (String w : allRemainingWords) {
+            int sum = 0;
+            sum += letterSource[w.charAt(0) - 97];
+            sum += letterSource[w.charAt(1) - 97];
+            sum += letterSource[w.charAt(2) - 97];
+            sum += letterSource[w.charAt(3) - 97];
+            sum += letterSource[w.charAt(4) - 97];
+            destinationHashMap.put(w, sum);
+        }
+
+
+    }
+
 
     public void reorderWords(WordOrderingStrategy strategy) {
         if (strategy == WordOrderingStrategy.ALPHABETICAL) {
 
             Collections.sort(allRemainingWords);
         } else if (strategy == WordOrderingStrategy.REVERSE_ALPHABETICAL) {
+            Collections.sort(allRemainingWords);
             Collections.reverse(allRemainingWords);
+        } else if (strategy == WordOrderingStrategy.RANDOM) {
+            Collections.shuffle(allRemainingWords);
+        } else if (strategy == WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG) {
+            weightWordsByLetter(lettersByEngUsage, wordsWeightedByLetterEngUsage);
+            LinkedHashMap<String, Integer> sortedRemainingWords = wordsWeightedByLetterEngUsage
+                    .entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .collect(LinkedHashMap::new,
+                            (col, e) -> col.put(e.getKey(), e.getValue()),
+                            HashMap::putAll);
 
+            allRemainingWords = new ArrayList<>(sortedRemainingWords.keySet());
 
         }
     }
+
+
 }
