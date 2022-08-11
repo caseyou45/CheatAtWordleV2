@@ -1,4 +1,4 @@
-package BarGraph;
+package cheatatwordle.BarGraph;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -10,7 +10,7 @@ public class BarGraph extends JPanel {
     private ArrayList<Integer> widthOfBars;
 
     public BarGraph() {
-        setBounds(820, 55, 160, 520);
+        setBounds(723, 160, 160, 520);
         setBorder(new LineBorder(Color.BLACK, 1));
 
     }

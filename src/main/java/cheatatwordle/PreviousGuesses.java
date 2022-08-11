@@ -22,9 +22,9 @@ import javax.swing.plaf.ComponentUI;
  */
 public class PreviousGuesses extends JPanel {
 
-    private final Font font = new Font("Calibri", Font.BOLD, 25);
-    private int height = 40;
-    private int width = 40;
+    private final Font font = new Font("Calibri", Font.BOLD, 20);
+    private int height = 30;
+    private int width = 30;
 
 
     CheatAtWordle cheatAtWordle;
@@ -35,7 +35,7 @@ public class PreviousGuesses extends JPanel {
     public PreviousGuesses(CheatAtWordle cheatAtWordle) {
 
 
-        setBounds(420, 55, 350, 350);
+        setBounds(200, 160, 250, 300);
         setBorder(new LineBorder(Color.GRAY, 1));
         GridLayout layout = new GridLayout(6, 1);
         layout.setHgap(10);
@@ -142,7 +142,7 @@ public class PreviousGuesses extends JPanel {
         panel.add(jLabelFifth);
 
 
-        JButton jButtonRemove = new JButton("Remove");
+        JButton jButtonRemove = new JButton("DEL");
         jButtonRemove.addActionListener((ActionEvent evt) -> {
 
             for (JPanel p : panels) {
@@ -156,6 +156,7 @@ public class PreviousGuesses extends JPanel {
 
         });
         jButtonRemove.setPreferredSize(new Dimension(width + width, height));
+        jButtonRemove.setFont(new Font("Courier", Font.PLAIN, 10));
 
         panel.add(jButtonRemove);
         panels.add(panel);

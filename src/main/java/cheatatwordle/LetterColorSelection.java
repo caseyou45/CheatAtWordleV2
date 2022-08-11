@@ -1,7 +1,8 @@
 package cheatatwordle;
 
+import enums.LetterColors;
+
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class LetterColorSelection extends JPanel {
@@ -22,7 +23,7 @@ public class LetterColorSelection extends JPanel {
     LetterColorSelection() {
 
 
-        setBounds(50, 90, 120, 350);
+        setBounds(50, 200, 120, 350);
         GridLayout layout = new GridLayout(10, 1);
         layout.setHgap(10);
         layout.setVgap(10);

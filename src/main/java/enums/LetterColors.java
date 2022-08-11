@@ -1,7 +1,7 @@
-package cheatatwordle;
+package enums;
 
 /**
- * @author casey
+ * @author casey wilson
  */
 public enum LetterColors {
     GRAY(120, 124, 126),

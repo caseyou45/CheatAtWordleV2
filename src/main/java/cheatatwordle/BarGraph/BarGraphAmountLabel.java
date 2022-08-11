@@ -1,4 +1,4 @@
-package BarGraph;
+package cheatatwordle.BarGraph;
 
 import logic.GameLogic;
 
@@ -13,7 +13,7 @@ public class BarGraphAmountLabel extends JPanel {
 
 
     public BarGraphAmountLabel() {
-        setBounds(990, 50, 30, 530);
+        setBounds(886, 157, 30, 530);
         GridLayout layout = new GridLayout(26, 1);
         setLayout(layout);
 

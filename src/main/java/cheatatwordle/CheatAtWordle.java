@@ -5,9 +5,9 @@
 package cheatatwordle;
 
 import Validation.Validator;
-import BarGraph.BarGraph;
-import BarGraph.BarGraphAmountLabel;
-import BarGraph.BarGraphLetterLabel;
+import cheatatwordle.BarGraph.BarGraph;
+import cheatatwordle.BarGraph.BarGraphAmountLabel;
+import cheatatwordle.BarGraph.BarGraphLetterLabel;
 import classes.Guess;
 
 import java.awt.*;
@@ -18,21 +18,18 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import enums.LetterColors;
 import logic.GameLogic;
 
 /**
- * @author casey
+ * @author casey wilson
  */
 public class CheatAtWordle extends JFrame {
 
-    String guessedWord = "";
     JTextField wordEntry;
-    JLabel wordEntryLabel, wordsRemainingLabel, previousGuessesLabel;
+    JLabel wordEntryLabel, previousGuessesLabel, barGraphLabel;
 
     JButton addWord;
-
-    JTextArea wordListDisplayArea;
-    JScrollPane scroll;
 
     PreviousGuesses previousGuesses;
 
@@ -42,24 +39,23 @@ public class CheatAtWordle extends JFrame {
 
     ArrayList<Character> unavailableLetters = new ArrayList<>();
 
-    ButtonGroup radioButtonGroup;
-
-    JRadioButton alphabeticalRadio, reverseAlphabeticalRadio, randomRadio, englishLangUsageRadio;
-
-
     LetterColorSelection letterColorSelection;
 
     BarGraph barGraph;
-    BarGraphLetterLabel barGraphLabel;
 
     BarGraphAmountLabel barGraphAmountLabel;
 
+    BarGraphLetterLabel barGraphLetterLabel;
+
+    WordsRemaining wordsRemaining;
+    JPanel mainPanel;
+
+    TopPanel topPanel;
 
     CheatAtWordle() {
 
         gl = new GameLogic();
 
-        JPanel mainPanel = new JPanel();
         Container contentPane = getContentPane();
 
         // enable explicit positioning of GUI components
@@ -67,60 +63,40 @@ public class CheatAtWordle extends JFrame {
 
         // Set up mainPanel
         mainPanel = new JPanel();
-        mainPanel.setBounds(0, 0, 1200, 700);
+        mainPanel.setBounds(0, 0, 1000, 800);
         mainPanel.setLayout(null);
         contentPane.add(mainPanel);
 
+        //Top Panel/Logo
+        topPanel = new TopPanel();
+        mainPanel.add(topPanel);
+
         //Word Entry Label
         wordEntryLabel = new JLabel("Enter Word");
-        wordEntryLabel.setBounds(50, 30, 100, 20);
+        wordEntryLabel.setBounds(50, 140, 100, 20);
         mainPanel.add(wordEntryLabel);
 
         //Word Entry
         wordEntry = new JTextField();
-        wordEntry.setBounds(50, 50, 100, 25);
+        wordEntry.setBounds(50, 160, 120, 30);
         wordEntry.setDocument(new JTextFieldValidation(5));
         mainPanel.add(wordEntry);
 
         //Add Word Button
         addWord = new JButton();
-        addWord.setText("Add Word");
-        addWord.setBackground(new Color(106, 150, 100));
+        addWord.setText("Enter");
+        addWord.setBackground(new Color(LetterColors.GREEN.getR(), LetterColors.GREEN.getG(), LetterColors.GREEN.getB()));
         addWord.setForeground(Color.WHITE);
-        addWord.setBounds(50, 460, 120, 25);
+        addWord.setBounds(50, 580, 120, 35);
         addWord.addActionListener((ActionEvent evt) -> {
             createGuess(evt);
         });
         mainPanel.add(addWord);
 
 
-        //Words Remaining Label
-        wordsRemainingLabel = new JLabel("Words Remaining: ");
-        wordsRemainingLabel.setBounds(235, 25, 150, 30);
-        mainPanel.add(wordsRemainingLabel);
-
-
-        //Panel Listing Available Words
-        wordListDisplayArea = new JTextArea();
-        wordListDisplayArea.setEditable(false);
-        wordListDisplayArea.setVisible(true);
-
-        String words = gl.getWordsForDisplay();
-        wordListDisplayArea.setText(words);
-
-        //Title for Remaining Words With Call to Get Remaining Word Count From Game Logic
-        wordsRemainingLabel.setText("Words Remaining: " + gl.getWordsRemainingCount());
-
-
-        //Adding wordListDisplayArea/Scroll Pane
-        scroll = new JScrollPane(wordListDisplayArea);
-        scroll.setBounds(235, 55, 150, 300);
-        mainPanel.add(scroll);
-
-
         //Previous Guesses Label and Instantiation
-        previousGuessesLabel = new JLabel("Previous Guesses");
-        previousGuessesLabel.setBounds(420, 24, 150, 30);
+        previousGuessesLabel = new JLabel("Words Entered So Far");
+        previousGuessesLabel.setBounds(200, 140, 150, 20);
         mainPanel.add(previousGuessesLabel);
 
         previousGuesses = new PreviousGuesses(this);
@@ -131,78 +107,36 @@ public class CheatAtWordle extends JFrame {
 
         mainPanel.add(letterColorSelection);
 
-        //Order Selection Group
-        radioButtonGroup = new ButtonGroup();
+        //Remaining Words Section and Instantiation
+        wordsRemaining = new WordsRemaining(gl);
+        mainPanel.add(wordsRemaining);
 
+        //Bar Graph Label
+        barGraphLabel = new JLabel("Letter Usage In Remaining Words");
+        barGraphLabel.setBounds(720, 141, 200, 15);
+        mainPanel.add(barGraphLabel);
 
-        //Radio for Alphabetical Sort
-        alphabeticalRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.ALPHABETICAL));
-        alphabeticalRadio.setBounds(235, 380, 150, 15);
-        radioButtonGroup.add(alphabeticalRadio);
-        mainPanel.add(alphabeticalRadio);
-
-        //Radio for Reverse-Alphabetical Sort
-        reverseAlphabeticalRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.REVERSE_ALPHABETICAL));
-        reverseAlphabeticalRadio.setBounds(235, 410, 150, 15);
-        radioButtonGroup.add(reverseAlphabeticalRadio);
-        mainPanel.add(reverseAlphabeticalRadio);
-
-        randomRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.RANDOM));
-        randomRadio.setBounds(235, 440, 150, 15);
-        radioButtonGroup.add(randomRadio);
-        mainPanel.add(randomRadio);
-
-
-        englishLangUsageRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG));
-        englishLangUsageRadio.setBounds(235, 470, 150, 15);
-        radioButtonGroup.add(englishLangUsageRadio);
-        mainPanel.add(englishLangUsageRadio);
-
-
-        JButton jButtonReorderWords = new JButton("Reorder Words");
-        jButtonReorderWords.setBounds(235, 500, 150, 35);
-        jButtonReorderWords.addActionListener((ActionEvent evt) -> {
-            reOrderWords(evt);
-        });
-        mainPanel.add(jButtonReorderWords);
-
+        //Bar Graph Section and Instantiation
 
         barGraph = new BarGraph();
         barGraph.createBarGraph(gl.getLetterAmounts());
         mainPanel.add(barGraph);
 
-        barGraphLabel = new BarGraphLetterLabel();
-        mainPanel.add(barGraphLabel);
+        //Bar Graph Amount Label (right) and Instantiation
 
         barGraphAmountLabel = new BarGraphAmountLabel();
         barGraphAmountLabel.createBarGraphAmountLabels(gl.getLetterAmounts());
         mainPanel.add(barGraphAmountLabel);
+
+        //Bar Graph Letter Label (left) and Instantiation
+        barGraphLetterLabel = new BarGraphLetterLabel();
+        mainPanel.add(barGraphLetterLabel);
 
         setTitle("Cheat At Wordle"); // set title bar string
         setSize(900, 700); // set window size
         setVisible(true); // display window
     }
 
-
-    public void reOrderWords(ActionEvent evt) {
-        WordOrderingStrategy wordOrderingStrategy = null;
-
-        if (alphabeticalRadio.isSelected()) {
-            wordOrderingStrategy = WordOrderingStrategy.ALPHABETICAL;
-        } else if (reverseAlphabeticalRadio.isSelected()) {
-            wordOrderingStrategy = WordOrderingStrategy.REVERSE_ALPHABETICAL;
-        } else if (randomRadio.isSelected()) {
-            wordOrderingStrategy = WordOrderingStrategy.RANDOM;
-        } else if (englishLangUsageRadio.isSelected()) {
-            wordOrderingStrategy = WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG;
-        }
-
-        gl.reorderWords(wordOrderingStrategy);
-        String words = gl.getWordsForDisplay();
-        wordListDisplayArea.setText(words);
-        scroll.getViewport().setViewPosition(new Point(0, 0));
-
-    }
 
     private void createGuess(ActionEvent evt) {
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
@@ -229,6 +163,7 @@ public class CheatAtWordle extends JFrame {
     }
 
     public void setBarGraphChanges() {
+        gl.setLetterAmounts();
         barGraph.createBarGraph(gl.getLetterAmounts());
         barGraphAmountLabel.updateBarGraphAmountLabels(gl.getLetterAmounts());
     }
@@ -252,9 +187,9 @@ public class CheatAtWordle extends JFrame {
         previousGuesses.addGuess(guess);
         String words = gl.getWordsForDisplay();
 
-        wordListDisplayArea.setText(words);
+        wordsRemaining.setWordListDisplayArea(words);
         letterColorSelection.resetBoxes();
-        wordsRemainingLabel.setText("Words Remaining: " + gl.getWordsRemainingCount());
+        wordsRemaining.setWordsRemainingLabel("Words Remaining: " + gl.getWordsRemainingCount());
 
     }
 
@@ -272,9 +207,8 @@ public class CheatAtWordle extends JFrame {
         }
 
         String words = gl.getWordsForDisplay();
-        wordsRemainingLabel.setText("Words Remaining: " + gl.getWordsRemainingCount());
-
-        wordListDisplayArea.setText(words);
+        wordsRemaining.setWordsRemainingLabel("Words Remaining: " + gl.getWordsRemainingCount());
+        wordsRemaining.setWordListDisplayArea(words);
         letterColorSelection.resetBoxes();
         setBarGraphChanges();
 
@@ -318,6 +252,7 @@ public class CheatAtWordle extends JFrame {
 
     public static void main(String[] args) {
         CheatAtWordle cheatAtWordle = new CheatAtWordle();
+        cheatAtWordle.setBounds(0, 0, 1000, 800);
         cheatAtWordle.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }

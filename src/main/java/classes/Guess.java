@@ -4,7 +4,7 @@
  */
 package classes;
 
-import cheatatwordle.LetterColors;
+import enums.LetterColors;
 
 import java.util.ArrayList;
 import java.util.HashMap;

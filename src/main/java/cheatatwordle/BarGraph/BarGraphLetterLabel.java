@@ -1,4 +1,4 @@
-package BarGraph;
+package cheatatwordle.BarGraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ public class BarGraphLetterLabel extends JPanel {
     ArrayList<JLabel> jLabels;
 
     public BarGraphLetterLabel() {
-        setBounds(805, 50, 10, 530);
+        setBounds(707, 157, 10, 530);
         GridLayout layout = new GridLayout(26, 1);
         setLayout(layout);
 
