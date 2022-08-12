@@ -130,6 +130,16 @@ public class Guess {
         return arr;
     }
 
+    public String getGuessAsWord() {
+        StringBuilder word = new StringBuilder();
+        word.append(firstLetterChar);
+        word.append(secondLetterChar);
+        word.append(thirdLetterChar);
+        word.append(fourthLetterChar);
+        word.append(fifthLetterChar);
+        return word.toString();
+    }
+
     public char getFirstLetterChar() {
         return firstLetterChar;
     }

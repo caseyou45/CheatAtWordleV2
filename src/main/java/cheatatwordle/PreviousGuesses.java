@@ -162,6 +162,9 @@ public class PreviousGuesses extends JPanel {
         panels.add(panel);
 
         add(panel);
+        
+        this.revalidate();
+        this.repaint();
 
     }
 

@@ -52,7 +52,7 @@ public class CheatAtWordle extends JFrame {
 
     TopPanel topPanel;
 
-    CheatAtWordle() {
+    public CheatAtWordle() {
 
         gl = new GameLogic();
 
@@ -135,10 +135,12 @@ public class CheatAtWordle extends JFrame {
         setTitle("Cheat At Wordle"); // set title bar string
         setSize(900, 700); // set window size
         setVisible(true); // display window
+
     }
 
 
     private void createGuess(ActionEvent evt) {
+        Stopwatch s = new Stopwatch();
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
                 && Validator.isTextFreeOfGrayLetters(unavailableLetters, wordEntry)
                 && guesses.size() < 6
@@ -158,6 +160,7 @@ public class CheatAtWordle extends JFrame {
             handleDisplayChangesAfterGuess(guess);
             setBarGraphChanges();
 
+            System.out.println(guess.getGuessAsWord() + " " + s.elapsedTime());
         }
 
     }
@@ -194,6 +197,7 @@ public class CheatAtWordle extends JFrame {
     }
 
     public void removeGuess(Guess guess) {
+
         guesses.remove(guess);
         unavailableLetters.clear();
 
@@ -215,6 +219,7 @@ public class CheatAtWordle extends JFrame {
         this.revalidate();
         this.repaint();
     }
+
 
     private void processGuessAnalysis(Guess guess) {
         gl.removeWordsWithGrayLetters(guess);
@@ -249,6 +254,26 @@ public class CheatAtWordle extends JFrame {
 
         }
     }
+
+    public class Stopwatch {
+        private long start;
+
+
+        public Stopwatch() {
+            start = System.currentTimeMillis();
+        }
+
+
+        public double elapsedTime() {
+            long now = System.currentTimeMillis();
+            return (now - start) / 1000.0;
+        }
+
+        public void reset() {
+            start = System.currentTimeMillis();
+        }
+    }
+
 
     public static void main(String[] args) {
         CheatAtWordle cheatAtWordle = new CheatAtWordle();

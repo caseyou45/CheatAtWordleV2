@@ -33,30 +33,31 @@ public class Validator {
     }
 
     public static boolean isTextFreeOfGrayLetters(ArrayList list, JTextField textField) {
-        boolean valid = true;
+        int valid = 0;
         ArrayList<Character> foundCharacters = new ArrayList<>();
 
         for (char c : textField.getText().toCharArray()) {
             if (list.contains(c) && !foundCharacters.contains(c)) {
                 foundCharacters.add(c);
-                valid = false;
+                valid = 1;
             }
         }
 
-        if (!valid) {
+        if (valid != 0) {
             String message = "";
-            message = "You used " + foundCharacters.size() + " unavailable (gray) letter(s) : ";
+            message = "Are you okay with using " + foundCharacters.size() + " unavailable (gray) letter(s) : ";
             for (char c : foundCharacters) {
                 message += c + ", ";
             }
+            message += "?";
 
             message = message.replaceAll(", $", "");
 
-            JOptionPane.showMessageDialog(getParentFrame(textField), message);
+            valid = JOptionPane.showConfirmDialog(getParentFrame(textField), message);
             textField.requestFocusInWindow();
         }
 
-        return valid;
+        return valid == 0;
 
 
     }

@@ -24,6 +24,7 @@ public class GameLogic {
 
 
     private ArrayList<String> allRemainingWords = new ArrayList<>();
+    Set<String> n = new HashSet<>();
     private ArrayList<String> allWords = new ArrayList<>();
 
     private final ArrayList<String> removedWords = new ArrayList<>();
@@ -106,6 +107,7 @@ public class GameLogic {
      */
     public String getWordsForDisplay(WordOrderingStrategy wordOrderingStrategy) {
         String words = "";
+
         for (String w : wordOrderingStrategy == WordOrderingStrategy.REMOVE_AS_MANY_WORDS_AS_POSSIBLE ? allWords : allRemainingWords) {
             words += "   " + w + "\n";
         }
@@ -135,10 +137,12 @@ public class GameLogic {
         ArrayList<Character> grayCharacters = guess.allGrayLetters();
 
         for (int i = 0; i < allRemainingWords.size(); i++) {
+            String word = allRemainingWords.get(i);
+
             for (char c : grayCharacters) {
                 //If the word has a letter than is GRAY, it is added to an ArrayList
-                if (allRemainingWords.get(i).indexOf(c) != -1) {
-                    removedWords.add(allRemainingWords.get(i));
+                if (word.indexOf(c) != -1) {
+                    removedWords.add(word);
                     break;
                 }
             }
@@ -157,14 +161,17 @@ public class GameLogic {
         HashMap<Integer, Character> greenLetters = guess.allGreenLetters();
 
         for (int i = 0; i < allRemainingWords.size(); i++) {
+
+            String word = allRemainingWords.get(i);
+            
             //Uses the allGreenLetters method from the guess object to get a HashMap of the
             //position and character of the GREEN letters.
             for (Map.Entry<Integer, Character> greenLetterEntry : greenLetters.entrySet()) {
                 Integer index = greenLetterEntry.getKey();
                 Character letter = greenLetterEntry.getValue();
                 //If the required letter is not in the specified position, the word is stored for removal.
-                if (letter != allRemainingWords.get(i).charAt(index)) {
-                    removedWords.add(allRemainingWords.get(i));
+                if (letter != word.charAt(index)) {
+                    removedWords.add(word);
                     break;
                 }
             }
@@ -188,9 +195,12 @@ public class GameLogic {
                 Character letter = yellowLetterEntry.getValue();
                 //If the letter is in the position marked as a YELLOW letter or
                 //if the letter is not in the word at all, the word is marked for removal.
-                if (letter == allRemainingWords.get(i).charAt(index)) {
+
+                String word = allRemainingWords.get(i);
+
+                if (letter == word.charAt(i)) {
                     removedWords.add(allRemainingWords.get(i));
-                } else if (allRemainingWords.get(i).indexOf(letter) == -1) {
+                } else if (word.indexOf(letter) == -1) {
                     removedWords.add(allRemainingWords.get(i));
                 }
             }
