@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package classes;
 
 import enums.LetterColors;
@@ -131,13 +127,12 @@ public class Guess {
     }
 
     public String getGuessAsWord() {
-        StringBuilder word = new StringBuilder();
-        word.append(firstLetterChar);
-        word.append(secondLetterChar);
-        word.append(thirdLetterChar);
-        word.append(fourthLetterChar);
-        word.append(fifthLetterChar);
-        return word.toString();
+        String word = String.valueOf(firstLetterChar) +
+                secondLetterChar +
+                thirdLetterChar +
+                fourthLetterChar +
+                fifthLetterChar;
+        return word;
     }
 
     public char getFirstLetterChar() {

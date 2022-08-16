@@ -1,11 +1,8 @@
 package cheatatwordle.BarGraph;
 
-import logic.GameLogic;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class BarGraphAmountLabel extends JPanel {
 
@@ -24,8 +21,8 @@ public class BarGraphAmountLabel extends JPanel {
     public void createBarGraphAmountLabels(int[] letterAmounts) {
         jLabels = new ArrayList<>();
 
-        for (int i = 0; i < letterAmounts.length; i++) {
-            JLabel tempLabel = new JLabel(String.valueOf(letterAmounts[i]));
+        for (int letterAmount : letterAmounts) {
+            JLabel tempLabel = new JLabel(String.valueOf(letterAmount));
             tempLabel.setFont(new Font("Courier", Font.PLAIN, 11));
             add(tempLabel);
             jLabels.add(tempLabel);

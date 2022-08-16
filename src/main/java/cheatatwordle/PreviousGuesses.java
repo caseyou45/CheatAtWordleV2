@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package cheatatwordle;
 
 import classes.Guess;
@@ -9,13 +6,8 @@ import classes.Guess;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import javax.accessibility.AccessibleContext;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.event.EventListenerList;
-import javax.swing.plaf.ComponentUI;
 
 /**
  * @author casey wilson
@@ -23,8 +15,6 @@ import javax.swing.plaf.ComponentUI;
 public class PreviousGuesses extends JPanel {
 
     private final Font font = new Font("Calibri", Font.BOLD, 20);
-    private int height = 30;
-    private int width = 30;
 
 
     CheatAtWordle cheatAtWordle;
@@ -51,11 +41,13 @@ public class PreviousGuesses extends JPanel {
 
     }
 
-    public void createNewWordDisplay(Guess guess) {
+    private void createNewWordDisplay(Guess guess) {
+
+        int height = 30;
+        int width = 30;
 
         JPanel panel = new JPanel();
         panel.setSize(250, 60);
-        GridLayout layout = new GridLayout(1, 6);
 
 
         //First Letter
@@ -162,7 +154,7 @@ public class PreviousGuesses extends JPanel {
         panels.add(panel);
 
         add(panel);
-        
+
         this.revalidate();
         this.repaint();
 

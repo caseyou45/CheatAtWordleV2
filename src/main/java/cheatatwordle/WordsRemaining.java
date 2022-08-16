@@ -1,6 +1,5 @@
 package cheatatwordle;
 
-import classes.Word;
 import enums.LetterColors;
 import enums.WordOrderingStrategy;
 import logic.GameLogic;
@@ -12,7 +11,6 @@ import java.awt.event.ActionEvent;
 public class WordsRemaining extends JPanel {
 
     JLabel wordsRemainingLabel;
-    JTextArea wordListDisplayArea;
 
     JScrollPane jScrollPane;
 
@@ -22,7 +20,12 @@ public class WordsRemaining extends JPanel {
 
     JRadioButton alphabeticalRadio, reverseAlphabeticalRadio, randomRadio, englishLangUsageRadio, wordsRemainingUsageRadio, removeMostWords;
 
-    public WordsRemaining(GameLogic gameLogic) {
+    JList<String> jListRemainingWords;
+
+    DefaultListModel<String> listRemainingWords;
+
+
+    public WordsRemaining(GameLogic gameLogic, JTextField wordEntry) {
         this.gameLogic = gameLogic;
         setLayout(null);
 
@@ -36,20 +39,25 @@ public class WordsRemaining extends JPanel {
         add(wordsRemainingLabel);
 
 
-        //Panel Listing Available Words
-        wordListDisplayArea = new JTextArea();
-        wordListDisplayArea.setEditable(false);
-        wordListDisplayArea.setVisible(true);
+        //JList Listing Available Words
+        listRemainingWords = new DefaultListModel<>();
+        for (String w : gameLogic.getAllRemainingWords()) {
+            listRemainingWords.addElement(w);
+        }
 
-        String words = gameLogic.getWordsForDisplay();
-        wordListDisplayArea.setText(words);
+        jListRemainingWords = new JList<>(listRemainingWords);
+        jListRemainingWords.addListSelectionListener(arg0 -> {
+            if (!arg0.getValueIsAdjusting()) {
+                wordEntry.setText(jListRemainingWords.getSelectedValue());
+            }
+        });
 
         //Title for Remaining Words With Call to Get Remaining Word Count From Game Logic
         wordsRemainingLabel.setText("Words Remaining: " + gameLogic.getWordsRemainingCount());
         add(wordsRemainingLabel);
 
         //Adding wordListDisplayArea/Scroll Pane
-        jScrollPane = new JScrollPane(wordListDisplayArea);
+        jScrollPane = new JScrollPane(jListRemainingWords);
         jScrollPane.setBounds(0, 18, 200, 200);
 
         add(jScrollPane);
@@ -63,7 +71,8 @@ public class WordsRemaining extends JPanel {
         alphabeticalRadio.setBounds(0, 235, 200, 15);
         alphabeticalRadio.setToolTipText("Order the remaining words alphabetically (a -> z).");
         radioButtonGroup.add(alphabeticalRadio);
-
+        //Set Alphabetical To Default
+        alphabeticalRadio.setSelected(true);
         add(alphabeticalRadio);
 
         //Radio for Reverse-Alphabetical Sort
@@ -73,13 +82,14 @@ public class WordsRemaining extends JPanel {
         radioButtonGroup.add(reverseAlphabeticalRadio);
         add(reverseAlphabeticalRadio);
 
+        //Radio for Random
         randomRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.RANDOM));
         randomRadio.setBounds(0, 295, 200, 15);
         randomRadio.setToolTipText("<html>Randomize the words. Each press with Random <br/> selected generates a new sequence.</html>");
         radioButtonGroup.add(randomRadio);
         add(randomRadio);
 
-
+        //Radio for English Sort
         englishLangUsageRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.BY_LETTER_USAGE_IN_ENGLISH_LANG));
         englishLangUsageRadio.setBounds(0, 320, 220, 30);
         englishLangUsageRadio.setToolTipText("<html>Some letters are used more frequently than others <br/> in the English Language. This" +
@@ -88,14 +98,16 @@ public class WordsRemaining extends JPanel {
         radioButtonGroup.add(englishLangUsageRadio);
         add(englishLangUsageRadio);
 
+        //Radio for Words Remaining Sort
         wordsRemainingUsageRadio = new JRadioButton(String.valueOf(WordOrderingStrategy.BY_LETTER_USAGE_IN_REMAINING_WORDS));
         wordsRemainingUsageRadio.setBounds(0, 360, 240, 30);
         wordsRemainingUsageRadio.setToolTipText("<html>As the game proceeds, the counts of every letter in  <br/> all the words changes." +
                 "This method gives a higher <br/> priority to the words that contain more of the <br/> most frequent letters.</html>");
         radioButtonGroup.add(wordsRemainingUsageRadio);
+
         add(wordsRemainingUsageRadio);
 
-
+        //Radio for Alphabetical Sort
         removeMostWords = new JRadioButton(String.valueOf(WordOrderingStrategy.REMOVE_AS_MANY_WORDS_AS_POSSIBLE));
         removeMostWords.setBounds(0, 400, 240, 30);
         removeMostWords.setToolTipText("<html>This method ALSO gives a higher priority to the words that <br/> contain more of the most frequent letters." +
@@ -106,9 +118,7 @@ public class WordsRemaining extends JPanel {
 
         JButton jButtonReorderWords = new JButton("Reorder Words");
         jButtonReorderWords.setBounds(25, 450, 150, 25);
-        jButtonReorderWords.addActionListener((ActionEvent evt) -> {
-            reOrderWords(evt);
-        });
+        jButtonReorderWords.addActionListener((ActionEvent evt) -> reOrderWords());
         jButtonReorderWords.setBackground(new Color(
                 LetterColors.GRAY.getR(),
                 LetterColors.GRAY.getG(),
@@ -120,7 +130,8 @@ public class WordsRemaining extends JPanel {
 
     }
 
-    public void reOrderWords(ActionEvent evt) {
+
+    public void reOrderWords() {
         WordOrderingStrategy wordOrderingStrategy = null;
 
         if (alphabeticalRadio.isSelected()) {
@@ -145,18 +156,20 @@ public class WordsRemaining extends JPanel {
             wordsRemainingLabel.setText("Words Remaining: " + gameLogic.getWordsRemainingCount());
         }
 
-
         gameLogic.reorderWords(wordOrderingStrategy);
-        String words = gameLogic.getWordsForDisplay(wordOrderingStrategy);
-        wordListDisplayArea.setText(words);
+
+        updateWordsRemainingJList(wordOrderingStrategy);
 
     }
 
-
-    public void setWordListDisplayArea(String text) {
-        wordListDisplayArea.setText(text);
+    private void updateWordsRemainingJList(WordOrderingStrategy wordOrderingStrategy) {
+        listRemainingWords.removeAllElements();
+        for (String w : gameLogic.updateWordsForDisplay(wordOrderingStrategy)) {
+            listRemainingWords.addElement(w);
+        }
 
     }
+
 
     public void setWordsRemainingLabel(String text) {
         wordsRemainingLabel.setText(text);

@@ -5,7 +5,6 @@ import enums.LetterColors;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class TopPanel extends JPanel {
 
@@ -36,11 +35,12 @@ public class TopPanel extends JPanel {
         instructions = new JLabel();
         instructions.setBounds(20, 15, 375, 100);
         instructions.setText("<html>1) Enter the words you play. View and manage the guesses you make. <br/>" +
-                "2) Use the list of words to make the next best guess. The list will shrink with each play <br/>" +
-                "3) Order the list using different methods. <br/> " +
+                "2) With each play, the list of words remaining will shrink.<br/>" +
+                "3) Order the list using different methods (Hover over each method to see details).<br/> " +
                 "4) See which letters are the most common throughout the remaining words.</html>");
         instructions.setForeground(Color.WHITE);
-        instructions.setFont(new Font("Calibri", Font.BOLD, 12));
+
+        instructions.setFont(new Font("Courier", Font.PLAIN, 11));
         add(instructions);
 
     }

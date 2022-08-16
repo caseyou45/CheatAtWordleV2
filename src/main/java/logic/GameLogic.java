@@ -7,8 +7,8 @@ package logic;
 import enums.WordOrderingStrategy;
 import classes.Guess;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import java.util.logging.Level;
@@ -23,16 +23,19 @@ public class GameLogic {
     private static final File lettersByEngUsageFile = new File("src/main/java/resources/lettersByPop.txt");
 
 
+    private static final File previousWords = new File("src/main/java/resources/usedWords.txt");
+
     private ArrayList<String> allRemainingWords = new ArrayList<>();
-    Set<String> n = new HashSet<>();
     private ArrayList<String> allWords = new ArrayList<>();
+
+    private final ArrayList<String> allPreviousWords = new ArrayList<>();
 
     private final ArrayList<String> removedWords = new ArrayList<>();
     LinkedHashMap<String, Integer> wordsRankedByLetterEngUsage = new LinkedHashMap<>();
     LinkedHashMap<String, Integer> wordsRankedByLetterRemainingWords = new LinkedHashMap<>();
 
-    private int[] letterAmounts = new int[26];
-    private int[] lettersByEngUsage = new int[26];
+    private final int[] letterAmounts = new int[26];
+    private final int[] lettersByEngUsage = new int[26];
 
     /**
      * GameLogic constructor loads the game's words in from file and the letters of the
@@ -46,6 +49,42 @@ public class GameLogic {
         loadLettersByEngUsageFile();
         //Explicit loading of letterAmounts Array. Also called when graph is made.
         setLetterAmounts();
+        //Load array containing words previously used by Wordle
+        loadPreviousWords();
+
+    }
+
+    public void saveChangesToFile(ArrayList<String> allPrevWords) throws IOException {
+        new PrintWriter(previousWords).close();
+
+
+        PrintWriter writer = new PrintWriter(previousWords, StandardCharsets.UTF_8);
+
+        for (String w : allPrevWords) {
+            writer.println(w);
+        }
+
+        writer.close();
+    }
+
+
+    /**
+     * Loads all words used by Wordle previously.
+     */
+    private void loadPreviousWords() {
+        Scanner sc = null;
+        try {
+            sc = new Scanner(previousWords);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GameLogic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        while (sc.hasNextLine()) {
+            String data = sc.nextLine();
+            data = data.toLowerCase();
+            allPreviousWords.add(data);
+        }
+        sc.close();
 
     }
 
@@ -105,29 +144,17 @@ public class GameLogic {
      * If the wordOrderingStrategy is REMOVE_AS_MANY_WORDS_AS_POSSIBLE, every word (allWords) is used to create the return String.
      * Otherwise, allRemainingWords is used.
      */
-    public String getWordsForDisplay(WordOrderingStrategy wordOrderingStrategy) {
-        String words = "";
+    public ArrayList<String> updateWordsForDisplay(WordOrderingStrategy wordOrderingStrategy) {
 
-        for (String w : wordOrderingStrategy == WordOrderingStrategy.REMOVE_AS_MANY_WORDS_AS_POSSIBLE ? allWords : allRemainingWords) {
-            words += "   " + w + "\n";
-        }
-        return words;
+        return wordOrderingStrategy == WordOrderingStrategy.REMOVE_AS_MANY_WORDS_AS_POSSIBLE ? allWords : allRemainingWords;
     }
 
     /**
-     * @return String that is words formatted for the WordsRemaining display
-     * <p>
-     * Overloaded Method.
-     * Simply returns allRemainingWords formatted as a String.
+     * @return ArrayList of all words remaining in play
      */
-    public String getWordsForDisplay() {
-        String words = "";
-        for (String w : allRemainingWords) {
-            words += "   " + w + "\n";
-        }
-        return words;
+    public ArrayList<String> getAllRemainingWords() {
+        return allRemainingWords;
     }
-
 
     /**
      * @param guess The goal of this method is to remove from the AllRemainingWords ArrayList any words than contain
@@ -136,9 +163,7 @@ public class GameLogic {
     public void removeWordsWithGrayLetters(Guess guess) {
         ArrayList<Character> grayCharacters = guess.allGrayLetters();
 
-        for (int i = 0; i < allRemainingWords.size(); i++) {
-            String word = allRemainingWords.get(i);
-
+        for (String word : allRemainingWords) {
             for (char c : grayCharacters) {
                 //If the word has a letter than is GRAY, it is added to an ArrayList
                 if (word.indexOf(c) != -1) {
@@ -160,10 +185,8 @@ public class GameLogic {
     public void removeWithoutGreenLetters(Guess guess) {
         HashMap<Integer, Character> greenLetters = guess.allGreenLetters();
 
-        for (int i = 0; i < allRemainingWords.size(); i++) {
+        for (String word : allRemainingWords) {
 
-            String word = allRemainingWords.get(i);
-            
             //Uses the allGreenLetters method from the guess object to get a HashMap of the
             //position and character of the GREEN letters.
             for (Map.Entry<Integer, Character> greenLetterEntry : greenLetters.entrySet()) {
@@ -187,21 +210,20 @@ public class GameLogic {
     public void removeWithoutYellowLettersAnywhere(Guess guess) {
         HashMap<Integer, Character> yellowLetters = guess.allYellowLetters();
 
-        for (int i = 0; i < allRemainingWords.size(); i++) {
+        for (String allRemainingWord : allRemainingWords) {
             //Uses the allYellowLetters method from the guess object to get a HashMap of the
             //position and character of the YELLOW letters.
             for (Map.Entry<Integer, Character> yellowLetterEntry : yellowLetters.entrySet()) {
-                Integer index = yellowLetterEntry.getKey();
                 Character letter = yellowLetterEntry.getValue();
+                Integer index = yellowLetterEntry.getKey();
+
                 //If the letter is in the position marked as a YELLOW letter or
                 //if the letter is not in the word at all, the word is marked for removal.
 
-                String word = allRemainingWords.get(i);
-
-                if (letter == word.charAt(i)) {
-                    removedWords.add(allRemainingWords.get(i));
-                } else if (word.indexOf(letter) == -1) {
-                    removedWords.add(allRemainingWords.get(i));
+                if (letter == allRemainingWord.charAt(index)) {
+                    removedWords.add(allRemainingWord);
+                } else if (allRemainingWord.indexOf(letter) == -1) {
+                    removedWords.add(allRemainingWord);
                 }
             }
         }
@@ -241,6 +263,13 @@ public class GameLogic {
         return letterAmounts;
     }
 
+    /**
+     * @return the ArrayList of all previously used words
+     */
+    public ArrayList<String> getAllPreviousWords() {
+        return allPreviousWords;
+    }
+
 
     /**
      * Fills the letterAmounts array with 0s. And then calls the method
@@ -278,14 +307,14 @@ public class GameLogic {
      */
     static char[] removeDuplicate(String wordWithRepeats) {
         HashSet<Character> s = new LinkedHashSet<>(5);
-        String word = "";
+        StringBuilder word = new StringBuilder();
         for (char x : wordWithRepeats.toCharArray())
             s.add(x);
 
         for (char x : s)
-            word += x;
+            word.append(x);
 
-        return word.toCharArray();
+        return word.toString().toCharArray();
     }
 
 
@@ -295,7 +324,7 @@ public class GameLogic {
      * @param wordSource         Takes in a letterSource, which is an array of scored letters; a destinationHashMap, where the score will be recorded;
      *                           and the source of the words.
      */
-    public void weightWordsByLetter(int[] letterSource, LinkedHashMap destinationHashMap, ArrayList<String> wordSource) {
+    public void weightWordsByLetter(int[] letterSource, LinkedHashMap<String, Integer> destinationHashMap, ArrayList<String> wordSource) {
         for (String w : wordSource) {
             int sum = 0;
             char[] word = removeDuplicate(w);

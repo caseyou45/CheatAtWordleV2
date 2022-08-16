@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package cheatatwordle;
 
 import Validation.Validator;
@@ -52,6 +48,14 @@ public class CheatAtWordle extends JFrame {
 
     TopPanel topPanel;
 
+    JMenuBar menuBar;
+
+    JMenu previousMenu;
+
+    JMenuItem previousMenuItem;
+
+    PreviousWords previousWords;
+
     public CheatAtWordle() {
 
         gl = new GameLogic();
@@ -61,11 +65,30 @@ public class CheatAtWordle extends JFrame {
         // enable explicit positioning of GUI components
         contentPane.setLayout(null);
 
+
         // Set up mainPanel
         mainPanel = new JPanel();
         mainPanel.setBounds(0, 0, 1000, 800);
         mainPanel.setLayout(null);
         contentPane.add(mainPanel);
+
+        menuBar = new JMenuBar();
+
+        previousMenu = new JMenu();
+        previousMenu.setMnemonic('p');
+        previousMenu.setText("Previous Words");
+
+
+        previousMenuItem = new JMenuItem();
+        previousMenuItem.setMnemonic('m');
+        previousMenuItem.setText("Manage Words");
+        previousMenuItem.addActionListener(evt -> openPreviousWordsActionPerformed());
+
+        previousMenu.add(previousMenuItem);
+
+        menuBar.add(previousMenu);
+
+        setJMenuBar(menuBar);
 
         //Top Panel/Logo
         topPanel = new TopPanel();
@@ -88,14 +111,12 @@ public class CheatAtWordle extends JFrame {
         addWord.setBackground(new Color(LetterColors.GREEN.getR(), LetterColors.GREEN.getG(), LetterColors.GREEN.getB()));
         addWord.setForeground(Color.WHITE);
         addWord.setBounds(50, 580, 120, 35);
-        addWord.addActionListener((ActionEvent evt) -> {
-            createGuess(evt);
-        });
+        addWord.addActionListener((ActionEvent evt) -> createGuess());
         mainPanel.add(addWord);
 
 
         //Previous Guesses Label and Instantiation
-        previousGuessesLabel = new JLabel("Words Entered So Far");
+        previousGuessesLabel = new JLabel("Words Entered");
         previousGuessesLabel.setBounds(200, 140, 150, 20);
         mainPanel.add(previousGuessesLabel);
 
@@ -108,7 +129,7 @@ public class CheatAtWordle extends JFrame {
         mainPanel.add(letterColorSelection);
 
         //Remaining Words Section and Instantiation
-        wordsRemaining = new WordsRemaining(gl);
+        wordsRemaining = new WordsRemaining(gl, wordEntry);
         mainPanel.add(wordsRemaining);
 
         //Bar Graph Label
@@ -138,8 +159,14 @@ public class CheatAtWordle extends JFrame {
 
     }
 
+    private void openPreviousWordsActionPerformed() {
+        previousWords = new PreviousWords(gl);
+        previousWords.setVisible(true);
+        previousWords.setLocationRelativeTo(this);
+    }
 
-    private void createGuess(ActionEvent evt) {
+
+    private void createGuess() {
         Stopwatch s = new Stopwatch();
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
                 && Validator.isTextFreeOfGrayLetters(unavailableLetters, wordEntry)
@@ -165,7 +192,8 @@ public class CheatAtWordle extends JFrame {
 
     }
 
-    public void setBarGraphChanges() {
+
+    private void setBarGraphChanges() {
         gl.setLetterAmounts();
         barGraph.createBarGraph(gl.getLetterAmounts());
         barGraphAmountLabel.updateBarGraphAmountLabels(gl.getLetterAmounts());
@@ -188,9 +216,7 @@ public class CheatAtWordle extends JFrame {
 
     private void handleDisplayChangesAfterGuess(Guess guess) {
         previousGuesses.addGuess(guess);
-        String words = gl.getWordsForDisplay();
-
-        wordsRemaining.setWordListDisplayArea(words);
+        wordsRemaining.reOrderWords();
         letterColorSelection.resetBoxes();
         wordsRemaining.setWordsRemainingLabel("Words Remaining: " + gl.getWordsRemainingCount());
 
@@ -210,9 +236,8 @@ public class CheatAtWordle extends JFrame {
 
         }
 
-        String words = gl.getWordsForDisplay();
         wordsRemaining.setWordsRemainingLabel("Words Remaining: " + gl.getWordsRemainingCount());
-        wordsRemaining.setWordListDisplayArea(words);
+        wordsRemaining.reOrderWords();
         letterColorSelection.resetBoxes();
         setBarGraphChanges();
 
@@ -227,16 +252,11 @@ public class CheatAtWordle extends JFrame {
         gl.removeWithoutYellowLettersAnywhere(guess);
     }
 
-    class JTextFieldValidation extends PlainDocument {
+    static class JTextFieldValidation extends PlainDocument {
 
-        private int limit;
+        private final int limit;
 
         JTextFieldValidation(int limit) {
-            super();
-            this.limit = limit;
-        }
-
-        JTextFieldValidation(int limit, boolean upper) {
             super();
             this.limit = limit;
         }
@@ -246,17 +266,15 @@ public class CheatAtWordle extends JFrame {
                 return;
             }
 
-            //Only allow insertions if entry is a letter and is below 5 characters in length
-            //Further validation occurs after word is submitted
             if (Character.isLetter(str.charAt(0)) && (getLength() + str.length()) <= limit) {
-                super.insertString(offset, str, attr);
+                super.insertString(offset, str.toLowerCase(), attr);
             }
 
         }
     }
 
-    public class Stopwatch {
-        private long start;
+    private static class Stopwatch {
+        private final long start;
 
 
         public Stopwatch() {
@@ -269,9 +287,7 @@ public class CheatAtWordle extends JFrame {
             return (now - start) / 1000.0;
         }
 
-        public void reset() {
-            start = System.currentTimeMillis();
-        }
+
     }
 
 

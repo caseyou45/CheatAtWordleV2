@@ -48,7 +48,5 @@ public class BarGraph extends JPanel {
         return new Dimension(200, 20); // appropriate constants
     }
 
-    public ArrayList<Integer> getWidthOfBars() {
-        return widthOfBars;
-    }
+
 }

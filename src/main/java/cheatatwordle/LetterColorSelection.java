@@ -7,12 +7,11 @@ import java.awt.*;
 
 public class LetterColorSelection extends JPanel {
 
-    JLabel wordEntryLabel,
-            firstLetterJLabel,
-            secondLetterJLabel,
-            thirdLetterJLabel,
-            fourthLetterJLabel,
-            fifthLetterJLabel;
+    JLabel firstLetterJLabel;
+    JLabel secondLetterJLabel;
+    JLabel thirdLetterJLabel;
+    JLabel fourthLetterJLabel;
+    JLabel fifthLetterJLabel;
     JComboBox<LetterColors> firstLetterComboBox,
             secondLetterComboBox,
             thirdLetterComboBox,
