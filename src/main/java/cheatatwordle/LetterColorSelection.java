@@ -1,5 +1,6 @@
 package cheatatwordle;
 
+import classes.Guess;
 import enums.LetterColors;
 
 import javax.swing.*;
@@ -21,13 +22,11 @@ public class LetterColorSelection extends JPanel {
 
     LetterColorSelection() {
 
-
         setBounds(50, 200, 120, 350);
         GridLayout layout = new GridLayout(10, 1);
         layout.setHgap(10);
         layout.setVgap(10);
         setLayout(layout);
-
 
         //First Letter Box Label
         firstLetterJLabel = new JLabel("1st Letter Color");
@@ -71,12 +70,41 @@ public class LetterColorSelection extends JPanel {
 
     }
 
+    /**
+     * Resets the letter color selection boxes
+     * Overloaded Method
+     */
     public void resetBoxes() {
         firstLetterComboBox.setSelectedIndex(0);
         secondLetterComboBox.setSelectedIndex(0);
         thirdLetterComboBox.setSelectedIndex(0);
         fourthLetterComboBox.setSelectedIndex(0);
         fifthLetterComboBox.setSelectedIndex(0);
+
+    }
+
+
+    /**
+     * If the last guess had Green selected for a particular char, the associated selection box
+     * is set to Green by default.
+     * Overloaded Method
+     */
+    public void resetBoxes(Guess guess) {
+        if (guess.getFirstLetterColor() == LetterColors.GREEN) {
+            firstLetterComboBox.setSelectedIndex(2);
+        }
+        if (guess.getSecondLetterColor() == LetterColors.GREEN) {
+            secondLetterComboBox.setSelectedIndex(2);
+        }
+        if (guess.getThirdLetterColor() == LetterColors.GREEN) {
+            thirdLetterComboBox.setSelectedIndex(2);
+        }
+        if (guess.getFourthLetterColor() == LetterColors.GREEN) {
+            fourthLetterComboBox.setSelectedIndex(2);
+        }
+        if (guess.getFifthLetterColor() == LetterColors.GREEN) {
+            fifthLetterComboBox.setSelectedIndex(2);
+        }
 
     }
 

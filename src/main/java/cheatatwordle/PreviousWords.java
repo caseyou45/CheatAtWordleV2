@@ -34,7 +34,7 @@ public class PreviousWords extends JFrame {
         setBounds(0, 0, 600, 600);
         setLayout(null);
         setTitle("Wordle Words");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         this.gl = gl;
 
         mainLabel = new JLabel("View and Manage Words Used by Wordle");

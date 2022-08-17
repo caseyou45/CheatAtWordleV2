@@ -217,7 +217,7 @@ public class CheatAtWordle extends JFrame {
     private void handleDisplayChangesAfterGuess(Guess guess) {
         previousGuesses.addGuess(guess);
         wordsRemaining.reOrderWords();
-        letterColorSelection.resetBoxes();
+        letterColorSelection.resetBoxes(guess);
         wordsRemaining.setWordsRemainingLabel("Words Remaining: " + gl.getWordsRemainingCount());
 
     }
