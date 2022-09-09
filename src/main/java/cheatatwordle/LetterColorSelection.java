@@ -90,6 +90,9 @@ public class LetterColorSelection extends JPanel {
      * Overloaded Method
      */
     public void resetBoxes(Guess guess) {
+
+        resetBoxes();
+        
         if (guess.getFirstLetterColor() == LetterColors.GREEN) {
             firstLetterComboBox.setSelectedIndex(2);
         }

@@ -32,6 +32,27 @@ public class Validator {
         return validText;
     }
 
+    public static boolean hasAlreadyBeenUsedByWordle(ArrayList list, JTextField textField) {
+        int valid = 0;
+
+        if (list.contains(textField.getText())) {
+            valid = 1;
+        }
+
+
+        if (valid != 0) {
+            String message = "";
+            message = "Are you okay with using " + textField.getText() + "? It has been already used by Wordle.";
+
+            valid = JOptionPane.showConfirmDialog(getParentFrame(textField), message);
+            textField.requestFocusInWindow();
+        }
+
+        return valid == 0;
+        
+    }
+
+
     public static boolean isTextFreeOfGrayLetters(ArrayList list, JTextField textField) {
         int valid = 0;
         ArrayList<Character> foundCharacters = new ArrayList<>();

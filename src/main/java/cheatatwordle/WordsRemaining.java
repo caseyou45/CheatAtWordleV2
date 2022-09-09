@@ -4,9 +4,11 @@ import enums.LetterColors;
 import enums.WordOrderingStrategy;
 import logic.GameLogic;
 
+import javax.lang.model.element.Element;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class WordsRemaining extends JPanel {
 
@@ -24,6 +26,8 @@ public class WordsRemaining extends JPanel {
 
     DefaultListModel<String> listRemainingWords;
 
+
+    ArrayList<String> allPreviousWords;
 
     public WordsRemaining(GameLogic gameLogic, JTextField wordEntry) {
         this.gameLogic = gameLogic;

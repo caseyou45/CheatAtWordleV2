@@ -56,6 +56,7 @@ public class CheatAtWordle extends JFrame {
 
     PreviousWords previousWords;
 
+
     public CheatAtWordle() {
 
         gl = new GameLogic();
@@ -170,7 +171,7 @@ public class CheatAtWordle extends JFrame {
         Stopwatch s = new Stopwatch();
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
                 && Validator.isTextFreeOfGrayLetters(unavailableLetters, wordEntry)
-                && guesses.size() < 6
+                && guesses.size() < 6 && Validator.hasAlreadyBeenUsedByWordle(gl.getAllPreviousWords(), wordEntry)
         ) {
 
             Guess guess = new Guess(wordEntry.getText(),

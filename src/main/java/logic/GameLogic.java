@@ -43,14 +43,14 @@ public class GameLogic {
      * scores all words accordingly.
      */
     public GameLogic() {
+        //Load array containing words previously used by Wordle
+        loadPreviousWords();
         //Load every word in to arrays
         loadWordsFromFile();
         //Load array containing English language's letters ordered by usage
         loadLettersByEngUsageFile();
         //Explicit loading of letterAmounts Array. Also called when graph is made.
         setLetterAmounts();
-        //Load array containing words previously used by Wordle
-        loadPreviousWords();
 
     }
 
@@ -103,7 +103,11 @@ public class GameLogic {
 
         while (sc.hasNextLine()) {
             String data = sc.nextLine();
-            allRemainingWords.add(data);
+            //Ensure no words already are added to alLRemainingWords arrayList
+            if (!allPreviousWords.contains(data)) {
+                allRemainingWords.add(data);
+            }
+            //But retain those words in allWords arrayList
             allWords.add(data);
         }
         sc.close();
