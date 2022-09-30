@@ -29,4 +29,12 @@ public enum LetterColors {
         this.g = g;
         this.b = b;
     }
+
+    public String toStringForTest() {
+        return "LetterColors{" +
+                "r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                '}';
+    }
 }

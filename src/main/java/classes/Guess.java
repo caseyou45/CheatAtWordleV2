@@ -37,27 +37,6 @@ public class Guess {
         this.fifthLetterColor = fifthLetterColor;
     }
 
-    public Guess(char firstLetterChar,
-                 char secondLetterChar,
-                 char thirdLetterChar,
-                 char fourthLetterChar,
-                 char fifthLetterChar,
-                 LetterColors firstLetterColor,
-                 LetterColors secondLetterColor,
-                 LetterColors thirdLetterColor,
-                 LetterColors fourthLetterColor,
-                 LetterColors fifthLetterColor) {
-        this.firstLetterChar = firstLetterChar;
-        this.secondLetterChar = secondLetterChar;
-        this.thirdLetterChar = thirdLetterChar;
-        this.fourthLetterChar = fourthLetterChar;
-        this.fifthLetterChar = fifthLetterChar;
-        this.firstLetterColor = firstLetterColor;
-        this.secondLetterColor = secondLetterColor;
-        this.thirdLetterColor = thirdLetterColor;
-        this.fourthLetterColor = fourthLetterColor;
-        this.fifthLetterColor = fifthLetterColor;
-    }
 
     public HashMap<Integer, Character> allYellowLetters() {
         HashMap<Integer, Character> arr = new HashMap<>();
@@ -104,6 +83,9 @@ public class Guess {
         return arr;
 
     }
+
+    //Position of Gray Letter Tiles is Not Important. That is why this method
+    //returns an ArrayList as opposed to a HashMap
 
     public ArrayList<Character> allGrayLetters() {
         ArrayList<Character> arr = new ArrayList<>();
@@ -215,19 +197,5 @@ public class Guess {
         this.fifthLetterColor = fifthLetterColor;
     }
 
-    @Override
-    public String toString() {
-        return "Guess{" +
-                "firstLetterChar=" + firstLetterChar +
-                ", secondLetterChar=" + secondLetterChar +
-                ", thirdLetterChar=" + thirdLetterChar +
-                ", fourthLetterChar=" + fourthLetterChar +
-                ", fifthLetterChar=" + fifthLetterChar +
-                ", firstLetterColor=" + firstLetterColor +
-                ", secondLetterColor=" + secondLetterColor +
-                ", thirdLetterColor=" + thirdLetterColor +
-                ", fourthLetterColor=" + fourthLetterColor +
-                ", fifthLetterColor=" + fifthLetterColor +
-                '}';
-    }
+
 }
