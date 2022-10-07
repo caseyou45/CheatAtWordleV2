@@ -161,6 +161,13 @@ public class GameLogic {
     }
 
     /**
+     * @return int array of letters ordered by usage in the English language
+     */
+    public int[] getLettersByEngUsage() {
+        return lettersByEngUsage;
+    }
+
+    /**
      * @param guess The goal of this method is to remove from the AllRemainingWords ArrayList any words than contain
      *              letters that have been marked as GRAY.
      */
