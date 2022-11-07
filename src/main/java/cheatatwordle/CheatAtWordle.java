@@ -9,6 +9,7 @@ import classes.Guess;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -31,9 +32,9 @@ public class CheatAtWordle extends JFrame {
 
     GameLogic gl;
 
-    ArrayList<Guess> guesses = new ArrayList<>();
+    List<Guess> guesses = new ArrayList<>();
 
-    ArrayList<Character> unavailableLetters = new ArrayList<>();
+    List<Character> unavailableLetters = new ArrayList<>();
 
     LetterColorSelection letterColorSelection;
 
@@ -160,6 +161,8 @@ public class CheatAtWordle extends JFrame {
 
     }
 
+
+    //Method to open the panel displaying previous words used by Wordle
     private void openPreviousWordsActionPerformed() {
         previousWords = new PreviousWords(gl);
         previousWords.setVisible(true);
@@ -167,12 +170,18 @@ public class CheatAtWordle extends JFrame {
     }
 
 
+    //Creates the guess once the player has pressed the button
     private void createGuess() {
         Stopwatch s = new Stopwatch();
+
+        //Ensures the entered word is valid. Will display error(s) to user if not.
         if (Validator.isTextWithinLengthRange(wordEntry, 5, 5)
                 && Validator.isTextFreeOfGrayLetters(unavailableLetters, wordEntry)
                 && guesses.size() < 6 && Validator.hasAlreadyBeenUsedByWordle(gl.getAllPreviousWords(), wordEntry)
         ) {
+
+
+            //Created a Guess object
 
             Guess guess = new Guess(wordEntry.getText(),
                     (LetterColors) letterColorSelection.firstLetterComboBox.getSelectedItem(),
@@ -182,10 +191,17 @@ public class CheatAtWordle extends JFrame {
                     (LetterColors) letterColorSelection.fifthLetterComboBox.getSelectedItem()
             );
 
+
+            //Processes the guess. Each method below performs the processes
+            //necessary for the game.
             guesses.add(guess);
+            //Analyzes the guess
             processGuessAnalysis(guess);
+            //Track letters now unavailable
             keepTrackOfUnavailableLetters(guess);
+            //Handles display changes after guess
             handleDisplayChangesAfterGuess(guess);
+            //Updates bar graph
             setBarGraphChanges();
 
             System.out.println(guess.getGuessAsWord() + " " + s.elapsedTime());
@@ -194,6 +210,7 @@ public class CheatAtWordle extends JFrame {
     }
 
 
+    //Handles the changes to the bar graph and related objects
     private void setBarGraphChanges() {
         gl.setLetterAmounts();
         barGraph.createBarGraph(gl.getLetterAmounts());
@@ -201,6 +218,7 @@ public class CheatAtWordle extends JFrame {
     }
 
 
+    //Handles control of which letters are no longer able to be played
     private void keepTrackOfUnavailableLetters(Guess guess) {
         if (guess.getFirstLetterColor() == LetterColors.GRAY && !unavailableLetters.contains(guess.getFirstLetterChar()))
             unavailableLetters.add(guess.getFirstLetterChar());
@@ -215,6 +233,8 @@ public class CheatAtWordle extends JFrame {
 
     }
 
+
+    //Handles various display changes after guess.
     private void handleDisplayChangesAfterGuess(Guess guess) {
         previousGuesses.addGuess(guess);
         wordsRemaining.reOrderWords();
@@ -223,9 +243,11 @@ public class CheatAtWordle extends JFrame {
 
     }
 
+    //If player chooses to remove a guess, this method controls that process.
     public void removeGuess(Guess guess) {
 
         guesses.remove(guess);
+        
         unavailableLetters.clear();
 
         gl.reloadWordsAfterGuessRemoval();
@@ -247,12 +269,16 @@ public class CheatAtWordle extends JFrame {
     }
 
 
+    //The core of the analysis in the game. This goes through remaining letters and removes
+    // them accordingly.
     private void processGuessAnalysis(Guess guess) {
         gl.removeWordsWithGrayLetters(guess);
         gl.removeWithoutGreenLetters(guess);
         gl.removeWithoutYellowLettersAnywhere(guess);
     }
 
+
+    //Controls how many and what case of letters can be enetered in to box.
     static class JTextFieldValidation extends PlainDocument {
 
         private final int limit;
@@ -274,6 +300,8 @@ public class CheatAtWordle extends JFrame {
         }
     }
 
+
+    //Stopwatch (version of Princeton implementation) for testing purposes.
     private static class Stopwatch {
         private final long start;
 

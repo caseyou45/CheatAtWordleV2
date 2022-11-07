@@ -27,8 +27,6 @@ public class WordsRemaining extends JPanel {
     DefaultListModel<String> listRemainingWords;
 
 
-    ArrayList<String> allPreviousWords;
-
     public WordsRemaining(GameLogic gameLogic, JTextField wordEntry) {
         this.gameLogic = gameLogic;
         setLayout(null);

@@ -4,6 +4,7 @@ package cheatatwordle;
 import classes.Guess;
 
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -19,7 +20,7 @@ public class PreviousGuesses extends JPanel {
 
     CheatAtWordle cheatAtWordle;
 
-    ArrayList<JPanel> panels = new ArrayList<>();
+    List<JPanel> panels = new ArrayList<>();
 
 
     public PreviousGuesses(CheatAtWordle cheatAtWordle) {

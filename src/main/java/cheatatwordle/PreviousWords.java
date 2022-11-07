@@ -12,11 +12,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PreviousWords extends JFrame {
 
 
-    ArrayList<String> allPreviousWords;
+    List<String> allPreviousWords;
     JScrollPane jScrollPane;
     GameLogic gl;
 

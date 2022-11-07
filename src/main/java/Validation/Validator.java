@@ -1,7 +1,7 @@
 package Validation;
 
 import java.awt.*;
-import java.lang.reflect.Array;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.*;
@@ -32,7 +32,7 @@ public class Validator {
         return validText;
     }
 
-    public static boolean hasAlreadyBeenUsedByWordle(ArrayList list, JTextField textField) {
+    public static boolean hasAlreadyBeenUsedByWordle(List list, JTextField textField) {
         int valid = 0;
 
         if (list.contains(textField.getText())) {
@@ -49,13 +49,14 @@ public class Validator {
         }
 
         return valid == 0;
-        
+
     }
 
 
-    public static boolean isTextFreeOfGrayLetters(ArrayList list, JTextField textField) {
+    public static boolean isTextFreeOfGrayLetters(List list, JTextField textField) {
         int valid = 0;
-        ArrayList<Character> foundCharacters = new ArrayList<>();
+
+        List<Character> foundCharacters = new ArrayList<>();
 
         for (char c : textField.getText().toCharArray()) {
             if (list.contains(c) && !foundCharacters.contains(c)) {
